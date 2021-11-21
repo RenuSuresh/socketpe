@@ -1,35 +1,75 @@
-import "./App.css";
-import io from "socket.io-client";
-import React, { useState, useEffect } from "react-dom";
-// import "./trueData";
-// import Graphs from "./Graphs";
-import { w3cwebsocket as W3CWebSocket } from "websocket";
+import React, { useEffect } from "react";
+import axios from "axios";
+let { SmartAPI, WebSocket } = require("smartapi-javascript");
 
-// const socket = io.connect("backend base url");
 function App() {
-  const user = "tdws150";
-  const pwd = "shubham@150";
-  const port = 8082;
-  const symbols = ["INFY"];
-  const client = new W3CWebSocket(
-    `wss://push.truedata.in:${port}?user=${user}&password=${pwd}`
-  );
-  client.onopen = () => {
-    console.log("WebSocket Client Connected");
-    client.send(JSON.stringify({ method: "addsymbol", symbols: ["INFY"] }));
-    client.onmessage = (e) => {
-      console.log("message>>>", JSON.parse(e.data));
-    };
-  };
-  // client.send('symbol')
+  useEffect(() => {
+    let smart_api = new SmartAPI({
+      api_key: "XZWPC1x2",
+    });
+    smart_api
+      .generateSession("AB1234", "Abhi@1234")
+      .then((data) => {
+        return smart_api.getProfile();
+      })
+      .then((data) => {
+        // Profile details
+      })
+      .catch((ex) => {
+        //Log error
+      });
+  });
+  const getToken = () => {
+    const data = JSON.stringify({
+      clientcode: "871739349",
+      password: "Abhi@1234",
+    });
+    var config = {
+      method: "post",
+      url: "https://apiconnect.angelbroking.com/rest/auth/angelbroking/user/v1/loginByPassword",
 
-  // client.onmessage = (e) => {
-  //   console.log("event>>>>", e);
-  // };
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-UserType": "USER",
+        "X-SourceID": "WEB",
+        "X-PrivateKey": "XZWPC1x2",
+        "X-ClientLocalIP": "192.168.0.106",
+        "X-ClientPublicIP": "103.157.7.7",
+        "X-MACAddress": "fe80::e170:c9e0:f29d:56da",
+      },
+      data: data,
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+  const getTokenSmart = () => {
+    let smart_api = new SmartAPI({
+      api_key: "XZWPC1x2",
+    });
+
+    smart_api
+      .generateSession("AB1234", "Abhi@1234")
+      .then((data) => {
+        return smart_api.getProfile();
+      })
+      .then((data) => {
+        console.log("data>>>>", data);
+        // Profile details
+      })
+      .catch((ex) => {
+        //Log error
+      });
+  };
   return (
-    <div className="App">
-      app
-      {/* <Graphs /> */}
+    <div>
+      <button onClick={getToken}>Generate token</button>
     </div>
   );
 }
