@@ -1,24 +1,26 @@
 import React, { useEffect } from "react";
 import axios from "axios";
+import TrueDataStock from "./TrueDataStock";
 let { SmartAPI, WebSocket } = require("smartapi-javascript");
 
 function App() {
   useEffect(() => {
-    let smart_api = new SmartAPI({
-      api_key: "XZWPC1x2",
-    });
-    smart_api
-      .generateSession("AB1234", "Abhi@1234")
-      .then((data) => {
-        return smart_api.getProfile();
-      })
-      .then((data) => {
-        // Profile details
-      })
-      .catch((ex) => {
-        //Log error
-      });
+    // let smart_api = new SmartAPI({
+    //   api_key: "XZWPC1x2",
+    // });
+    // smart_api
+    //   .generateSession("AB1234", "Abhi@1234")
+    //   .then((data) => {
+    //     return smart_api.getProfile();
+    //   })
+    //   .then((data) => {
+    //     // Profile details
+    //   })
+    //   .catch((ex) => {
+    //     //Log error
+    //   });
   });
+
   const getToken = () => {
     const data = JSON.stringify({
       clientcode: "871739349",
@@ -49,6 +51,7 @@ function App() {
         console.log(error);
       });
   };
+
   const getTokenSmart = () => {
     let smart_api = new SmartAPI({
       api_key: "XZWPC1x2",
@@ -67,9 +70,28 @@ function App() {
         //Log error
       });
   };
+
+  const getWs = () => {
+    let web_socket = new WebSocket({
+      client_code: "AB1234",
+      feed_token: "0cf9c8de-71cd-4d12-863c-b516be316fe8",
+    });
+
+    web_socket.connect().then(() => {
+      web_socket.runScript("nse_cm|2885", "hb"); // SCRIPT: nse_cm|2885, mcx_fo|222900  TASK: mw|sfi|dp
+    });
+
+    web_socket.on("tick", receiveTick);
+
+    function receiveTick(data) {
+      console.log("receiveTick:::::", data);
+    }
+  };
   return (
     <div>
       <button onClick={getToken}>Generate token</button>
+      <button onClick={getWs}>Smart WS</button>
+      <TrueDataStock />
     </div>
   );
 }
