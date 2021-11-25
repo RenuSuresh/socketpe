@@ -1,9 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import TrueDataStock from "./TrueDataStock";
+import { w3cwebsocket as W3CWebSocket } from "websocket";
+
 let { SmartAPI, WebSocket } = require("smartapi-javascript");
 
 function App() {
+  const [value, setValue] = useState();
   useEffect(() => {
     // let smart_api = new SmartAPI({
     //   api_key: "XZWPC1x2",
@@ -23,8 +26,8 @@ function App() {
 
   const getToken = () => {
     const data = JSON.stringify({
-      clientcode: "871739349",
-      password: "Abhi@1234",
+      clientcode: "RENU1212",
+      password: "Floor#123",
     });
     var config = {
       method: "post",
@@ -35,7 +38,7 @@ function App() {
         Accept: "application/json",
         "X-UserType": "USER",
         "X-SourceID": "WEB",
-        "X-PrivateKey": "XZWPC1x2",
+        "X-PrivateKey": "5KfeByMv", //private key
         "X-ClientLocalIP": "192.168.0.106",
         "X-ClientPublicIP": "103.157.7.7",
         "X-MACAddress": "fe80::e170:c9e0:f29d:56da",
@@ -54,11 +57,11 @@ function App() {
 
   const getTokenSmart = () => {
     let smart_api = new SmartAPI({
-      api_key: "XZWPC1x2",
+      api_key: "5KfeByMv",
     });
 
     smart_api
-      .generateSession("AB1234", "Abhi@1234")
+      .generateSession("RENU1212", "Floor#123")
       .then((data) => {
         return smart_api.getProfile();
       })
@@ -87,10 +90,27 @@ function App() {
       console.log("receiveTick:::::", data);
     }
   };
+
+  const getLocalWS = () => {
+    const connection = new W3CWebSocket("ws://push.stockpe.in");
+    // connection.onM
+    connection.onopen = () => {
+      console.log("WebSocket Client Connected");
+      connection.send(JSON.stringify({ symbol: value }));
+      connection.onmessage = (e) => {
+        console.log("message>>>", JSON.parse(e.data));
+      };
+    };
+  };
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
   return (
     <div>
-      <button onClick={getToken}>Generate token</button>
+      <input onChange={handleChange} value={value} />
+      <button onClick={getTokenSmart}>Generate token</button>
       <button onClick={getWs}>Smart WS</button>
+      <button onClick={getLocalWS}>Local WS</button>
       <TrueDataStock />
     </div>
   );

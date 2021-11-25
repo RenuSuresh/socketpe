@@ -12,6 +12,7 @@
     "react-scripts": "4.0.3",
     "smartapi-javascript": "^1.0.14",
     "socket.io-client": "^4.3.2",
+    "sockjs": "^0.3.21",
     "truedata-nodejs": "^1.0.6",
     "web-vitals": "^1.1.2",
     "websocket": "^1.0.34",
